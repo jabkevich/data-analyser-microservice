@@ -48,23 +48,23 @@ services:
     ports:
       - '8082:8082'
 
-  store:
-    image: 'jabkevich/data-store-microservice:latest'
-    networks:
-      - app
-    depends_on:
-      - debezium
-      - redis
-      - kafka
-    env_file:
-      - .env
-#    environment:
-#      - REDIS_HOST=${REDIS_HOST}
-#      - REDIS_PORT=${REDIS_PORT}
-#      - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
-#      - DEBEZIUM_KAFKA_BROKER_ID=${KAFKA_BROKER_ID}
-    ports:
-      - '8083:8083'
+#  store:
+#    image: 'jabkevich/data-store-microservice:latest'
+#    networks:
+#      - app
+#    depends_on:
+#      - debezium
+#      - redis
+#      - kafka
+#    env_file:
+#      - .env
+##    environment:
+##      - REDIS_HOST=${REDIS_HOST}
+##      - REDIS_PORT=${REDIS_PORT}
+##      - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
+##      - DEBEZIUM_KAFKA_BROKER_ID=${KAFKA_BROKER_ID}
+#    ports:
+#      - '8083:8083'
 
   zookeeper:
     image: 'confluentinc/cp-zookeeper:latest'
@@ -113,3 +113,15 @@ services:
       - "wal_level=logical"
     volumes:
       - db-data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7.2-rc-alpine
+    networks:
+      - app
+    env_file:
+      - .env
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning
+    volumes:
+      - redis-data:/data
